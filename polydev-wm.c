@@ -48,13 +48,9 @@ int main()
                 msg.xclient.window = ev.xkey.subwindow;
                 msg.xclient.format = 32;
                 msg.xclient.data.l[0] = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
-		        msg.xclient.data.l[1] = CurrentTime;
+                msg.xclient.data.l[1] = CurrentTime;
                 XSendEvent(dpy, ev.xkey.subwindow, False, 0, &msg);
             }
-	    else if (ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F4")))
-	    {
-
- 	    }
             else
             {
                 XRaiseWindow(dpy, ev.xkey.subwindow);
@@ -63,8 +59,8 @@ int main()
         else if(ev.type == ButtonPress && ev.xbutton.subwindow != None)
         {
             XGrabPointer(dpy, ev.xbutton.subwindow, True,
-                    PointerMotionMask|ButtonReleaseMask, GrabModeAsync,
-                    GrabModeAsync, None, None, CurrentTime);
+            PointerMotionMask|ButtonReleaseMask, GrabModeAsync,
+            GrabModeAsync, None, None, CurrentTime);
             XGetWindowAttributes(dpy, ev.xbutton.subwindow, &attr);
             start = ev.xbutton;
         }
