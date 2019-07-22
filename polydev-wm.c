@@ -1,14 +1,19 @@
-/* TinyWM is written by Nick Welch <mack@incise.org>, 2005.
+/* PolyDev WM by Maciej Michalec is based on the TinyWM.
+ * TinyWM is written by Nick Welch <mack@incise.org>, 2005.
  *
  * This software is in the public domain
  * and is provided AS IS, with NO WARRANTY. */
 
 #include <X11/Xlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
+FILE *logfile;
 
 int main()
 {
+    logfile = fopen("/tmp/polydevWM.log", "a+");
     Display * dpy;
     Window root;
     XWindowAttributes attr;
@@ -29,8 +34,11 @@ int main()
     for(;;)
     {
         XNextEvent(dpy, &ev);
+        // fprintf(logfile, "Event captured, type=%d\n", ev.type);
         if(ev.type == KeyPress && ev.xkey.subwindow != None)
+        {
             XRaiseWindow(dpy, ev.xkey.subwindow);
+        }
         else if(ev.type == ButtonPress && ev.xbutton.subwindow != None)
         {
             XGrabPointer(dpy, ev.xbutton.subwindow, True,
@@ -52,7 +60,10 @@ int main()
                 MAX(1, attr.height + (start.button==3 ? ydiff : 0)));
         }
         else if(ev.type == ButtonRelease)
+        {
             XUngrabPointer(dpy, CurrentTime);
+        }
     }
+    fclose(logfile);
 }
 
