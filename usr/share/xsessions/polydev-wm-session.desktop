@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=PolyDev WM
+Comment=Ridiculously tiny window manager based on a tinyWM
+Exec=polydev-wm-session
+Terminal=False
+TryExec=polydev-wm
+Type=Application
+
+[Window Manager]
+SessionManaged=true
+

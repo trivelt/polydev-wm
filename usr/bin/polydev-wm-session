@@ -1,0 +1,5 @@
+#!/bin/sh
+xsetroot -solid "#000000"
+xrdb -load $HOME/.Xdefaults
+x-terminal-emulator &
+exec /usr/bin/polydev-wm >> /tmp/polydev-wm.log 2>&1
