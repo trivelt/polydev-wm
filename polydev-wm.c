@@ -39,6 +39,7 @@ int main()
     XButtonEvent start;
     XEvent ev;
     XEvent msg; // msg to send (alt+f4)
+    short focusedOnWindow;
 
     if (!(dpy = XOpenDisplay(0x0))) return 1;
 
@@ -46,7 +47,7 @@ int main()
 
     XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F1")), Mod1Mask, root,
             True, GrabModeAsync, GrabModeAsync);
-    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F2")), Mod1Mask, root,
+    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("t")), ControlMask | Mod1Mask, root,
              True, GrabModeAsync, GrabModeAsync);
     XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F4")), Mod1Mask, root,
              True, GrabModeAsync, GrabModeAsync);
@@ -59,25 +60,23 @@ int main()
     {
         XNextEvent(dpy, &ev);
         // fprintf(logfile, "Event captured, type=%d\n", ev.type);
-        if (ev.type == KeyPress && ev.xkey.subwindow != None)
+        focusedOnWindow = (ev.type == KeyPress && ev.xkey.subwindow != None);
+        if (focusedOnWindow && ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F4")))
         {
-            if (ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F4")))
-            {
-                memset(&msg, 0, sizeof(msg));
-                msg.xclient.type = ClientMessage;
-                msg.xclient.message_type = XInternAtom(dpy, "WM_PROTOCOLS", True);
-                msg.xclient.window = ev.xkey.subwindow;
-                msg.xclient.format = 32;
-                msg.xclient.data.l[0] = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
-                msg.xclient.data.l[1] = CurrentTime;
-                XSendEvent(dpy, ev.xkey.subwindow, False, 0, &msg);
-            }
-            else if (ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F1")))
-            {
-                XRaiseWindow(dpy, ev.xkey.subwindow);
-            }
+            memset(&msg, 0, sizeof(msg));
+            msg.xclient.type = ClientMessage;
+            msg.xclient.message_type = XInternAtom(dpy, "WM_PROTOCOLS", True);
+            msg.xclient.window = ev.xkey.subwindow;
+            msg.xclient.format = 32;
+            msg.xclient.data.l[0] = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+            msg.xclient.data.l[1] = CurrentTime;
+            XSendEvent(dpy, ev.xkey.subwindow, False, 0, &msg);
         }
-        else if (ev.type == KeyPress && ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F2")))
+        else if (focusedOnWindow && ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("F1")))
+        {
+            XRaiseWindow(dpy, ev.xkey.subwindow);
+        }
+        else if (ev.type == KeyPress && ev.xkey.keycode == XKeysymToKeycode(dpy, XStringToKeysym("t")))
         {
             system(terminalApp);
         }
